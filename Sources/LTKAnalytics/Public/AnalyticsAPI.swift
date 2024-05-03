@@ -35,8 +35,7 @@ public actor LTKAnalytics {
             let id
         ) {
             logger.warning(
- "received duplicate event: \(id,
- privacy: .public)"
+                "received duplicate event: \(id, privacy: .public)"
             )
             throw AnalyticsError.duplicateEvent(
                 id: id
