@@ -29,7 +29,9 @@ public struct AnalyticsEvent: Identifiable {
         ID: \(id.uuidString)
         type: \(type.description)
         timestamp: \(timestamp.ISO8601Format())
-        attributes: \(String(describing: attributes))
+        attributes: \(String(
+        describing: attributes
+        ))
         """
     }
 }

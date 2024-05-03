@@ -25,28 +25,52 @@ internal actor EventBus {
         _ event: AnalyticsEvent
     ) async throws {
         // TODO: do this in a better way
-        let existingEvents = queue.filter { $0.id == event.id}
+        let existingEvents = queue.filter {
+            $0.id == event.id
+        }
         if existingEvents.count > 0 {
-            throw AnalyticsError.duplicateEvent(id: event.id)
+            throw AnalyticsError.duplicateEvent(
+                id: event.id
+            )
         }
-        if await checkForPotentialRapidFire(event) {
-            await dispatchEvent(event)
-            logger.critical("potential duplicate event fired: \(event.loggingDescription)")
+        if await checkForPotentialRapidFire(
+            event
+        ) {
+            await dispatchEvent(
+                event
+            )
+            logger.critical(
+                "potential duplicate event fired: \(event.loggingDescription)"
+            )
             // throw error of potential duplicate, but this is more of a warning
-            throw AnalyticsError.potentialRapidFire(type: event.type)
+            throw AnalyticsError.potentialRapidFire(
+                type: event.type
+            )
         }
-        await dispatchEvent(event)
+        await dispatchEvent(
+            event
+        )
     }
-
-    private func dispatchEvent(_ event: AnalyticsEvent) async {
-        queue.append(event)
+    
+    private func dispatchEvent(
+        _ event: AnalyticsEvent
+    ) async {
+        queue.append(
+            event
+        )
         // TODO: actually send events to a stream where they are processed and sent off
     }
-
-    private func checkForPotentialRapidFire(_ event: AnalyticsEvent) async -> Bool {
+    
+    private func checkForPotentialRapidFire(
+        _ event: AnalyticsEvent
+    ) async -> Bool {
         let existingEvents = queue.filter { existingEvent in
             existingEvent.type == event.type &&
-            abs(existingEvent.timestamp.timeIntervalSince(event.timestamp)) <= 0.25
+            abs(
+                existingEvent.timestamp.timeIntervalSince(
+                    event.timestamp
+                )
+            ) <= 0.25
         }
         return existingEvents.count > 0
     }
